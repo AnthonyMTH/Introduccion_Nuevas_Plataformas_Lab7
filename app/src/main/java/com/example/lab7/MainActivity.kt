@@ -10,6 +10,8 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import java.io.BufferedReader
+import java.io.InputStreamReader
 
 class MainActivity : AppCompatActivity() {
 
@@ -41,14 +43,31 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun loadEdificaciones(): List<Edificacion> {
-        // Aquí lee el archivo de texto o define los elementos manualmente
-        // Ejemplo de datos
-        return listOf(
-            Edificacion(R.drawable.edificio_a, "Catedral de la Ciudad de Arequipa", "Residencial", "Descripción del Edificio A"),
-            Edificacion(R.drawable.edificio_b, "Monasterio Santa Catalina", "Comercial", "Descripción del Edificio B"),
-            Edificacion(R.drawable.edificio_c, "Iglesia y Complejo de la Compañía", "Industrial", "Descripción del Edificio C"),
-            Edificacion(R.drawable.edificio_d, "Los Tambos", "Comercial", "Descripción del Edificio D"),
-            Edificacion(R.drawable.edificio_e, "Sabandia", "Industrial", "Descripción del Edificio E"),
-            )
+        val edificaciones = mutableListOf<Edificacion>()
+
+        // Abrimos el archivo desde la carpeta raw
+        val inputStream = resources.openRawResource(R.raw.edificaciones)
+        val reader = BufferedReader(InputStreamReader(inputStream))
+
+        reader.useLines { lines ->
+            lines.forEach { line ->
+                // Separar cada línea en sus partes
+                val parts = line.split("|")
+                if (parts.size == 4) {
+                    val imageName = parts[0].trim()
+                    val title = parts[1].trim()
+                    val category = parts[2].trim()
+                    val description = parts[3].trim()
+
+                    // Obtener el recurso de la imagen por nombre
+                    val imageResId = resources.getIdentifier(imageName, "drawable", packageName)
+
+                    // Crear el objeto Edificacion y añadirlo a la lista
+                    edificaciones.add(Edificacion(imageResId, title, category, description))
+                }
+            }
+        }
+
+        return edificaciones
     }
 }

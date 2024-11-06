@@ -34,7 +34,7 @@ android {
         jvmTarget = "1.8"
     }
 }
-
+val room_version = "2.6.1"
 dependencies {
 
     implementation(libs.androidx.core.ktx)
